@@ -1,0 +1,599 @@
+/*******************************************************************************************
+  SIMPL+ Module Information
+*******************************************************************************************/
+
+/*******************************************************************************************
+  Compiler Directives
+*******************************************************************************************/
+#DEFAULT_VOLATILE
+#ENABLE_STACK_CHECKING
+#ENABLE_TRACE
+        
+
+/*******************************************************************************************
+  DIGITAL, ANALOG and SERIAL INPUTS and OUTPUTS
+*******************************************************************************************/
+/*
+DIGITAL_INPUT power_on;		
+DIGITAL_INPUT power_off;
+*/
+ 
+DIGITAL_INPUT Poll_All;
+ANALOG_INPUT Zone_1_Source;
+ANALOG_INPUT Zone_2_Source;
+ANALOG_INPUT Zone_3_Source;
+ANALOG_INPUT Zone_4_Source;
+ANALOG_INPUT Zone_5_Source;
+ANALOG_INPUT Zone_6_Source;
+ANALOG_INPUT Zone_7_Source;
+ANALOG_INPUT Zone_8_Source;
+ANALOG_INPUT Zone_1_Source_Volume;
+ANALOG_INPUT Zone_2_Source_Volume;
+ANALOG_INPUT Zone_3_Source_Volume;
+ANALOG_INPUT Zone_4_Source_Volume;
+ANALOG_INPUT Zone_5_Source_Volume;
+ANALOG_INPUT Zone_6_Source_Volume;
+ANALOG_INPUT Zone_7_Source_Volume;
+ANALOG_INPUT Zone_8_Source_Volume;
+ANALOG_INPUT Zone_1_MicLine_Volume;
+ANALOG_INPUT Zone_2_MicLine_Volume;
+ANALOG_INPUT Zone_3_MicLine_Volume;
+ANALOG_INPUT Zone_4_MicLine_Volume;
+ANALOG_INPUT Zone_5_MicLine_Volume;
+ANALOG_INPUT Zone_6_MicLine_Volume;
+ANALOG_INPUT Zone_7_MicLine_Volume;
+ANALOG_INPUT Zone_8_MicLine_Volume;
+ANALOG_INPUT Zone_1_Master_Volume;
+ANALOG_INPUT Zone_2_Master_Volume;
+ANALOG_INPUT Zone_3_Master_Volume;
+ANALOG_INPUT Zone_4_Master_Volume;
+ANALOG_INPUT Zone_5_Master_Volume;
+ANALOG_INPUT Zone_6_Master_Volume;
+ANALOG_INPUT Zone_7_Master_Volume;
+ANALOG_INPUT Zone_8_Master_Volume;
+ANALOG_INPUT Zone_1_Master_Mute;
+ANALOG_INPUT Zone_2_Master_Mute;
+ANALOG_INPUT Zone_3_Master_Mute;
+ANALOG_INPUT Zone_4_Master_Mute;
+ANALOG_INPUT Zone_5_Master_Mute;
+ANALOG_INPUT Zone_6_Master_Mute;
+ANALOG_INPUT Zone_7_Master_Mute;
+ANALOG_INPUT Zone_8_Master_Mute;
+STRING_INPUT Denon_Rx$[256];
+STRING_OUTPUT Denon_Tx$;
+
+ 
+                              
+/*******************************************************************************************
+  Global Variables
+*******************************************************************************************/
+STRING SerialCommand[64];
+SIGNED_INTEGER nVolume_Scaled;
+SIGNED_INTEGER siVolume;
+
+   
+/*******************************************************************************************
+  Functions
+*******************************************************************************************/
+/*******************************************************************************************
+  Event Handlers
+*******************************************************************************************/
+
+CHANGE Zone_1_Source
+{
+	IF(Zone_1_Source)
+	{		
+		MAKESTRING(Denon_Tx$, "@0PXOT1SS%s\x0D", LTOA(Zone_1_Source));
+		MAKESTRING(Denon_Tx$, "@0?PXOT1SS<CR>\x0D");
+	}
+}
+
+CHANGE Zone_2_Source
+{
+	IF(Zone_2_Source)
+	{		
+		MAKESTRING(Denon_Tx$, "@0PXOT2SS%s\x0D", LTOA(Zone_2_Source));
+		MAKESTRING(Denon_Tx$, "@0?PXOT2SS<CR>\x0D");
+	}
+}
+
+CHANGE Zone_3_Source
+{
+	IF(Zone_3_Source)
+	{		
+		MAKESTRING(Denon_Tx$, "@0PXOT3SS%s\x0D", LTOA(Zone_3_Source));
+	    MAKESTRING(Denon_Tx$, "@0?PXOT3SS<CR>\x0D");
+	}
+}
+                   
+CHANGE Zone_4_Source
+{
+	IF(Zone_4_Source)
+	{		
+		MAKESTRING(Denon_Tx$, "@0PXOT4SS%s\x0D", LTOA(Zone_4_Source));
+		MAKESTRING(Denon_Tx$, "@0?PXOT4SS<CR>\x0D");
+	}
+}
+                  
+CHANGE Zone_5_Source
+{
+	IF(Zone_5_Source)
+	{		
+		MAKESTRING(Denon_Tx$, "@0PXOT5SS%s\x0D", LTOA(Zone_5_Source));
+		MAKESTRING(Denon_Tx$, "@0?PXOT5SS<CR>\x0D");
+	}
+}
+          
+CHANGE Zone_6_Source
+{
+	IF(Zone_6_Source)
+	{		
+		MAKESTRING(Denon_Tx$, "@0PXOT6SS%s\x0D", LTOA(Zone_6_Source));
+		MAKESTRING(Denon_Tx$, "@0?PXOT6SS<CR>\x0D");
+	}
+}
+
+CHANGE Zone_7_Source
+{
+	IF(Zone_7_Source)
+	{		
+		MAKESTRING(Denon_Tx$, "@0PXOT7SS%s\x0D", LTOA(Zone_7_Source));
+		MAKESTRING(Denon_Tx$, "@0?PXOT7SS<CR>\x0D");
+	}
+}
+
+CHANGE Zone_8_Source
+{
+	IF(Zone_8_Source)
+	{		
+		MAKESTRING(Denon_Tx$, "@0PXOT8SS%s\x0D", LTOA(Zone_8_Source));
+		MAKESTRING(Denon_Tx$, "@0?PXOT8SS<CR>\x0D");
+	}
+}
+         
+CHANGE Zone_1_Source_Volume
+{
+	IF(Zone_1_Source_Volume)
+	{		
+		nVolume_Scaled = ((Zone_1_Source_Volume * 100)/65535);
+		TRACE("nVolume_Scaled: %u\n", nVolume_Scaled);
+
+
+		siVolume = nVolume_Scaled - 90;
+		TRACE("siVolume: %u\n", siVolume);
+	
+		IF(siVolume>=0)
+			MAKESTRING(Denon_Tx$, "@0PXOT1SL%s.0\x0D", LTOA(siVolume));
+		ELSE IF(siVolume=-90)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT1SLInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT1SL-%s.0\x0D", LTOA(siVolume));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT1SL<CR>\x0D");
+	}
+}
+
+CHANGE Zone_2_Source_Volume
+{
+	IF(Zone_2_Source_Volume)
+	{		
+		nVolume_Scaled = ((Zone_2_Source_Volume * 100)/65535);
+		siVolume = nVolume_Scaled - 90;
+
+		IF(siVolume>=0)
+			MAKESTRING(Denon_Tx$, "@0PXOT2SL%s.0\x0D", LTOA(siVolume));
+		ELSE IF(siVolume=-90)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT2SLInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT2SL-%s.0\x0D", LTOA(siVolume));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT2SL<CR>\x0D");
+	}
+}
+               
+
+CHANGE Zone_3_Source_Volume
+{
+	IF(Zone_3_Source_Volume)
+	{		
+		nVolume_Scaled = ((Zone_3_Source_Volume * 100)/65535);
+		siVolume = nVolume_Scaled - 90;
+
+		IF(siVolume>=0)
+			MAKESTRING(Denon_Tx$, "@0PXOT3SL%s.0\x0D", LTOA(siVolume));
+		ELSE IF(siVolume=-90)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT3SLInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT3SL-%s.0\x0D", LTOA(siVolume));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT3SL<CR>\x0D");
+	}
+}
+
+CHANGE Zone_4_Source_Volume
+{
+	IF(Zone_4_Source_Volume)
+	{		
+		nVolume_Scaled = ((Zone_4_Source_Volume * 100)/65535);
+		siVolume = nVolume_Scaled - 90;
+
+		IF(siVolume>=0)
+			MAKESTRING(Denon_Tx$, "@0PXOT4SL%s.0\x0D", LTOA(siVolume));
+		ELSE IF(siVolume=-90)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT4SLInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT4SL-%s.0\x0D", LTOA(siVolume));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT4SL<CR>\x0D");
+	}
+}
+
+CHANGE Zone_5_Source_Volume
+{
+	IF(Zone_5_Source_Volume)
+	{		
+		nVolume_Scaled = ((Zone_5_Source_Volume * 100)/65535);
+		siVolume = nVolume_Scaled - 90;
+
+		IF(siVolume>=0)
+			MAKESTRING(Denon_Tx$, "@0PXOT5SL%s.0\x0D", LTOA(siVolume));
+		ELSE IF(siVolume=-90)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT5SLInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT5SL-%s.0\x0D", LTOA(siVolume));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT5SL<CR>\x0D");
+	}
+}
+
+CHANGE Zone_6_Source_Volume
+{
+	IF(Zone_6_Source_Volume)
+	{		
+		nVolume_Scaled = ((Zone_6_Source_Volume * 100)/65535);
+		siVolume = nVolume_Scaled - 90;
+
+		IF(siVolume>=0)
+			MAKESTRING(Denon_Tx$, "@0PXOT6SL%s.0\x0D", LTOA(siVolume));
+		ELSE IF(siVolume=-90)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT6SLInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT6SL-%s.0\x0D", LTOA(siVolume));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT6SL<CR>\x0D");
+	}
+}
+              
+
+CHANGE Zone_7_Source_Volume
+{
+	IF(Zone_7_Source_Volume)
+	{		
+		nVolume_Scaled = ((Zone_7_Source_Volume * 100)/65535);
+		siVolume = nVolume_Scaled - 90;
+
+		IF(siVolume>=0)
+			MAKESTRING(Denon_Tx$, "@0PXOT7SL%s.0\x0D", LTOA(siVolume));
+		ELSE IF(siVolume=-90)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT7SLInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT7SL-%s.0\x0D", LTOA(siVolume));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT7SL<CR>\x0D");
+	}
+}
+
+CHANGE Zone_8_Source_Volume
+{
+	IF(Zone_8_Source_Volume)
+	{		
+		nVolume_Scaled = ((Zone_8_Source_Volume * 100)/65535);
+		siVolume = nVolume_Scaled - 90;
+
+		IF(siVolume>=0)
+			MAKESTRING(Denon_Tx$, "@0PXOT8SL%s.0\x0D", LTOA(siVolume));
+		ELSE IF(siVolume=-90)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT8SLInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT8SL-%s.0\x0D", LTOA(siVolume));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT8SL<CR>\x0D");
+	}
+}
+
+CHANGE Zone_1_MicLine_Volume
+{
+	IF(Zone_1_MicLine_Volume)
+	{		
+		nVolume_Scaled = ((Zone_1_MicLine_Volume * 100)/65535);
+		siVolume = nVolume_Scaled - 90;
+
+		IF(siVolume>=0)
+			MAKESTRING(Denon_Tx$, "@0PXOT1ML%s.0\x0D", LTOA(siVolume));
+		ELSE IF(siVolume=-90)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT1MLInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT1ML-%s.0\x0D", LTOA(siVolume));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT1ML<CR>\x0D");
+	}
+}
+
+CHANGE Zone_2_MicLine_Volume
+{
+	IF(Zone_2_MicLine_Volume)
+	{		
+		nVolume_Scaled = ((Zone_2_MicLine_Volume * 100)/65535);
+		siVolume = nVolume_Scaled - 90;
+
+		IF(siVolume>=0)
+			MAKESTRING(Denon_Tx$, "@0PXOT2ML%s.0\x0D", LTOA(siVolume));
+		ELSE IF(siVolume=-90)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT2MLInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT2ML-%s.0\x0D", LTOA(siVolume));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT2ML<CR>\x0D");
+	}
+}
+               
+
+CHANGE Zone_3_MicLine_Volume
+{
+	IF(Zone_3_MicLine_Volume)
+	{		
+		nVolume_Scaled = ((Zone_3_MicLine_Volume * 100)/65535);
+		siVolume = nVolume_Scaled - 90;
+
+		IF(siVolume>=0)
+			MAKESTRING(Denon_Tx$, "@0PXOT3ML%s.0\x0D", LTOA(siVolume));
+		ELSE IF(siVolume=-90)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT3MLInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT3ML-%s.0\x0D", LTOA(siVolume));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT3ML<CR>\x0D");
+	}
+}
+
+CHANGE Zone_4_MicLine_Volume
+{
+	IF(Zone_4_MicLine_Volume)
+	{		
+		nVolume_Scaled = ((Zone_4_MicLine_Volume * 100)/65535);
+		siVolume = nVolume_Scaled - 90;
+
+		IF(siVolume>=0)
+			MAKESTRING(Denon_Tx$, "@0PXOT4ML%s.0\x0D", LTOA(siVolume));
+		ELSE IF(siVolume=-90)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT4MLInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT4ML-%s.0\x0D", LTOA(siVolume));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT4ML<CR>\x0D");
+	}
+}
+
+CHANGE Zone_5_MicLine_Volume
+{
+	IF(Zone_5_MicLine_Volume)
+	{		
+		nVolume_Scaled = ((Zone_5_MicLine_Volume * 100)/65535);
+		siVolume = nVolume_Scaled - 90;
+
+		IF(siVolume>=0)
+			MAKESTRING(Denon_Tx$, "@0PXOT5ML%s.0\x0D", LTOA(siVolume));
+		ELSE IF(siVolume=-90)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT5MLInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT5ML-%s.0\x0D", LTOA(siVolume));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT5ML<CR>\x0D");
+	}
+}
+
+CHANGE Zone_6_MicLine_Volume
+{
+	IF(Zone_6_MicLine_Volume)
+	{		
+		nVolume_Scaled = ((Zone_6_MicLine_Volume * 100)/65535);
+		siVolume = nVolume_Scaled - 90;
+
+		IF(siVolume>=0)
+			MAKESTRING(Denon_Tx$, "@0PXOT6ML%s.0\x0D", LTOA(siVolume));
+		ELSE IF(siVolume=-90)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT6MLInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT6ML-%s.0\x0D", LTOA(siVolume));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT6ML<CR>\x0D");
+	}
+}
+              
+
+CHANGE Zone_7_MicLine_Volume
+{
+	IF(Zone_7_MicLine_Volume)
+	{		
+		nVolume_Scaled = ((Zone_7_MicLine_Volume * 100)/65535);
+		siVolume = nVolume_Scaled - 90;
+
+		IF(siVolume>=0)
+			MAKESTRING(Denon_Tx$, "@0PXOT7ML%s.0\x0D", LTOA(siVolume));
+		ELSE IF(siVolume=-90)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT7MLInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT7ML-%s.0\x0D", LTOA(siVolume));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT7ML<CR>\x0D");
+	}
+}
+
+CHANGE Zone_8_MicLine_Volume
+{
+	IF(Zone_8_MicLine_Volume)
+	{		
+		nVolume_Scaled = ((Zone_8_MicLine_Volume * 100)/65535);
+		siVolume = nVolume_Scaled - 90;
+
+		IF(siVolume>=0)
+			MAKESTRING(Denon_Tx$, "@0PXOT8ML%s.0\x0D", LTOA(siVolume));
+		ELSE IF(siVolume=-90)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT8MLInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT8ML-%s.0\x0D", LTOA(siVolume));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT8ML<CR>\x0D");
+	}
+}
+                                 
+CHANGE Zone_1_Master_Volume
+{
+	IF(Zone_1_Master_Volume)
+	{		
+		nVolume_Scaled = ((Zone_1_Master_Volume * 100)/32768);
+		TRACE("nVolume_Scaled: %lu\n", nVolume_Scaled);
+
+		IF(nVolume_Scaled>=90)
+			MAKESTRING(Denon_Tx$, "@0PXOT1LV%s.0\x0D", LTOA(nVolume_Scaled-90));
+		ELSE IF(nVolume_Scaled=0)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT1LVInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT1LV-%s.0\x0D", LTOA(90-nVolume_Scaled));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT1LV<CR>\x0D");
+	}
+}
+
+CHANGE Zone_2_Master_Volume
+{
+	IF(Zone_2_Master_Volume)
+	{		
+		nVolume_Scaled = ((Zone_2_Master_Volume * 100)/32768);
+		TRACE("nVolume_Scaled: %lu\n", nVolume_Scaled);
+
+		IF(nVolume_Scaled>=90)
+			MAKESTRING(Denon_Tx$, "@0PXOT2LV%s.0\x0D", LTOA(nVolume_Scaled-90));
+		ELSE IF(nVolume_Scaled=0)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT2LVInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT2LV-%s.0\x0D", LTOA(90-nVolume_Scaled));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT2LV<CR>\x0D");
+	}
+}
+               
+
+CHANGE Zone_3_Master_Volume
+{
+	IF(Zone_3_Master_Volume)
+	{		
+		nVolume_Scaled = ((Zone_3_Master_Volume * 100)/32768);
+		TRACE("nVolume_Scaled: %lu\n", nVolume_Scaled);
+
+		IF(nVolume_Scaled>=90)
+			MAKESTRING(Denon_Tx$, "@0PXOT3LV%s.0\x0D", LTOA(nVolume_Scaled-90));
+		ELSE IF(nVolume_Scaled=0)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT3LVInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT3LV-%s.0\x0D", LTOA(90-nVolume_Scaled));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT3LV<CR>\x0D");
+	}
+}
+
+CHANGE Zone_4_Master_Volume
+{
+	IF(Zone_4_Master_Volume)
+	{		
+		nVolume_Scaled = ((Zone_4_Master_Volume * 100)/32768);
+		TRACE("nVolume_Scaled: %lu\n", nVolume_Scaled);
+
+		IF(nVolume_Scaled>=90)
+			MAKESTRING(Denon_Tx$, "@0PXOT4LV%s.0\x0D", LTOA(nVolume_Scaled-90));
+		ELSE IF(nVolume_Scaled=0)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT4LVInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT4LV-%s.0\x0D", LTOA(90-nVolume_Scaled));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT4LV<CR>\x0D");
+	}
+}
+
+CHANGE Zone_5_Master_Volume
+{
+	IF(Zone_5_Master_Volume)
+	{		
+		nVolume_Scaled = ((Zone_5_Master_Volume * 100)/32768);
+		TRACE("nVolume_Scaled: %lu\n", nVolume_Scaled);
+
+		IF(nVolume_Scaled>=90)
+			MAKESTRING(Denon_Tx$, "@0PXOT5LV%s.0\x0D", LTOA(nVolume_Scaled-90));
+		ELSE IF(nVolume_Scaled=0)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT5LVInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT5LV-%s.0\x0D", LTOA(90-nVolume_Scaled));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT5LV<CR>\x0D");
+	}
+}
+
+CHANGE Zone_6_Master_Volume
+{
+	IF(Zone_6_Master_Volume)
+	{		
+		nVolume_Scaled = ((Zone_6_Master_Volume * 100)/32768);
+		TRACE("nVolume_Scaled: %lu\n", nVolume_Scaled);
+
+		IF(nVolume_Scaled>=90)
+			MAKESTRING(Denon_Tx$, "@0PXOT6LV%s.0\x0D", LTOA(nVolume_Scaled-90));
+		ELSE IF(nVolume_Scaled=0)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT6LVInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT6LV-%s.0\x0D", LTOA(90-nVolume_Scaled));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT6LV<CR>\x0D");
+	}
+}
+              
+
+CHANGE Zone_7_Master_Volume
+{
+	IF(Zone_7_Master_Volume)
+	{		
+		nVolume_Scaled = ((Zone_7_Master_Volume * 100)/32768);
+		TRACE("nVolume_Scaled: %lu\n", nVolume_Scaled);
+
+		IF(nVolume_Scaled>=90)
+			MAKESTRING(Denon_Tx$, "@0PXOT7LV%s.0\x0D", LTOA(nVolume_Scaled-90));
+		ELSE IF(nVolume_Scaled=0)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT7LVInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT7LV-%s.0\x0D", LTOA(90-nVolume_Scaled));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT7LV<CR>\x0D");
+	}
+}
+
+CHANGE Zone_8_Master_Volume
+{
+	IF(Zone_8_Master_Volume)
+	{		
+		nVolume_Scaled = ((Zone_8_Master_Volume * 100)/32768);
+		TRACE("nVolume_Scaled: %lu\n", nVolume_Scaled);
+
+		IF(nVolume_Scaled>=90)
+			MAKESTRING(Denon_Tx$, "@0PXOT8LV%s.0\x0D", LTOA(nVolume_Scaled-90));
+		ELSE IF(nVolume_Scaled=0)
+		  	MAKESTRING(Denon_Tx$, "@0PXOT8LVInf\x0D");
+		ELSE
+		  	MAKESTRING(Denon_Tx$, "@0PXOT8LV-%s.0\x0D", LTOA(90-nVolume_Scaled));
+
+		MAKESTRING(Denon_Tx$, "@0?PXOT8LV<CR>\x0D");
+	}
+}
+
+/*******************************************************************************************
+  Main()
+*******************************************************************************************/
+

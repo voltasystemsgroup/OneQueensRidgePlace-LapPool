@@ -1,0 +1,84 @@
+#Default_NONVOLATILE 
+Digital_Input Zone1_Poll, Zone2_Poll, Zone1_StationSelect[10], Zone2_StationSelect[10];
+String_Input RX$[512];
+
+String_Output TX$;
+String_Output Zone1_StationNames$[10], Zone2_StationNames$[10];
+String Zone1_StationID$[10][8], Zone2_StationID$[10][8];
+String Zone1_StationName$[10][30], Zone2_StationName$[10][30];
+INTEGER Z1Poll, Z2Poll, Index#;
+PUSH Zone1_Poll
+{
+	TX$ = "\x02DMXPSI01" + "            " + "\x03";	
+	Z1Poll = 0;
+}
+
+PUSH Zone2_Poll
+{
+	TX$ = "\x02DMXPSI02" + "            " + "\x03";
+    Z2Poll = 0;
+}
+PUSH Zone1_StationSelect
+{
+String TMPZone[8];
+	TMPZone = Zone1_StationID$[GetLastModifiedArrayIndex()];
+	If (TMPZone = "")
+		{
+			TX$ = "\x02DMXPSI01" + "            " + "\x03";	
+			Z1Poll = 0;
+        }
+	TX$ = "\x02DMXPSC01" + TMPZone + "    " + "\x03";
+}
+PUSH Zone2_StationSelect
+{
+String TMPZone[8];
+	TMPZone = Zone2_StationID$[GetLastModifiedArrayIndex()];
+	If (TMPZone = "")
+		{
+			TX$ = "\x02DMXPSI02" + "            " + "\x03";	
+			Z1Poll = 0;
+        }
+
+	TX$ = "\x02DMXPSC02" + TMPZone + "    " + "\x03";
+}
+
+
+CHANGE RX$
+{
+String RX_TEMP$[256];
+String Trash$[60];
+Integer TrashLoc;
+	RX_TEMP$ = RX$;
+	IF(FIND("DMXPSI01",RX$,1))
+		{
+		Trash$ = Remove("OK",RX_TEMP$,1);
+		For(Index# = 1 to 10)
+			{
+			Zone1_StationID$[Index#] = Remove("\x20",RX_TEMP$, 1);
+			Zone1_StationName$[Index#] = Remove("\x0A", RX_TEMP$, 1);
+			TrashLoc = ReverseFind("\x0A", Zone1_StationName$[Index#]);
+			Zone1_StationName$[Index#] =  RemoveByLength(TrashLoc - 1, Zone1_StationName$[Index#]);
+			Zone1_StationNames$[Index#]= Zone1_StationName$[Index#];
+			}
+
+		 }
+	IF(FIND("DMXPSI02",RX_TEMP$,1))
+		{
+		Trash$ = Remove("OK",RX_TEMP$,1);
+		For(Index# = 1 to 10)
+			{
+			Zone2_StationID$[Index#] = Remove("\x20",RX_TEMP$, 1);
+			Zone2_StationName$[Index#] = Remove("\x0A", RX_TEMP$, 1);
+			TrashLoc = ReverseFind("\x0A", Zone2_StationName$[Index#]);
+			Zone2_StationName$[Index#] =  RemoveByLength(TrashLoc - 1, Zone2_StationName$[Index#]);
+			Zone2_StationNames$[Index#]= Zone2_StationName$[Index#];
+			}
+
+		 }
+
+//	clearbuffer(RX$);
+	
+	
+	 
+
+}
